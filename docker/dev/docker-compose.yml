@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  django_unchained:
+    build:
+      context: ../../
+      dockerfile: docker/dev/Dockerfile
+    volumes:
+      - ../../:/usr/src/app/
+    ports:
+      - 8008:8000
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=foo
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_DATABASE=django_unchained
+      - DB_USER=postgres
+      - DB_PASSWORD=point_god
+#      - DB_HOST=host.docker.internal
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE=postgres
+
+    depends_on:
+      - db
+
+  db:
+    image: postgres:11.5-alpine
+    volumes:
+      - django_unchained_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=point_god
+      - POSTGRES_DB=django_unchained
+    ports:
+      - 65432:5432
+
+volumes:
+  django_unchained_postgres_data:
